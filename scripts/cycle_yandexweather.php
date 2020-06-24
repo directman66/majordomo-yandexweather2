@@ -20,9 +20,21 @@ echo date("H:i:s") . " running " . basename(__FILE__) . PHP_EOL;
 $latest_check=0;
 //$checkEvery=300; // poll every 5 min
 //$checkEvery=$yandexweather_module->config['EVERY']*60;
+
+setGlobal((str_replace('.php', '', basename(__FILE__))).'Run', time(), 1);
+$cycleVarName='ThisComputer.'.str_replace('.php', '', basename(__FILE__)).'Run';
+
+echo date("H:i:s") . " running " . basename(__FILE__) . PHP_EOL;
+$checked_time = 0;
+
 while (1)
 {
-   setGlobal((str_replace('.php', '', basename(__FILE__))) . 'Run', time(), 1);
+    if (time() - $checked_time > 20) {
+      $checked_time = time();
+      saveToCache("MJD:$cycleVarName", $checked_time);
+   }
+   //setGlobal((str_replace('.php', '', basename(__FILE__))) . 'Run', time(), 1);
+   
    if ((time()-$latest_check)>$checkEvery) {
     $latest_check=time();
     //echo date('Y-m-d H:i:s').' Polling devices...\n';
